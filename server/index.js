@@ -30,7 +30,7 @@ io.on('connection', function(socket) {
   });
 
   socket.on('player moved', function(move) {
-    io.emit('place movement', move);
+    socket.broadcast.emit('place movement', move);
   });
 });
 
