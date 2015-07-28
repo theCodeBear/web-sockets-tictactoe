@@ -18,10 +18,12 @@ $('#usernameForm').submit(function() {
     } else {
       $('#userTitle').text(username).css('display', 'block');
       if (response.player === 1) {
+        $('.square').addClass('myTurn');
         playerPiece = 'x';
         myTurn = true;
       } else {
         playerPiece = 'o';
+        $('.square').addClass('notMyTurn');
       }
       player = response.player;
     }
@@ -33,7 +35,8 @@ $('.square').on('click', function(el) {
   if (myTurn && !$('#'+el.target.id).text()) {
     console.log(el.target.id);
     $('#'+el.target.id).text(playerPiece);
-    myTurn = !myTurn;
+    myTurn = false;
+    $('.square').removeClass('myTurn').addClass('notMyTurn');
     socket.emit('player moved', {space: el.target.id, piece: playerPiece, player: player});
   }
 });
@@ -42,7 +45,8 @@ $('.square').on('click', function(el) {
 socket.on('place movement', function(move) {
   if (!$('#'+move.space).text()) {
     $('#'+move.space).text(move.piece);
-    myTurn = !myTurn;
+    myTurn = true;
+    $('.square').removeClass('notMyTurn').addClass('myTurn');
   }
 });
 

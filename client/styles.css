@@ -1,8 +1,16 @@
 .square {
-  border: 1px solid black;
+  border: 4px solid black;
   height: 200px;
   text-align: center;
   font-size: 10em;
+}
+
+.myTurn:hover {
+  border: 4px solid green;
+}
+
+.notMyTurn:hover {
+  border: 4px solid red;
 }
 
 #gameboard {
