@@ -1,8 +1,6 @@
 var socket = io();
 
-var player1 = 'x';
-var player2 = 'o';
-var currentPlayer = player1;
+var playerPiece = '';
 var username = '';
 
 $('#usernameForm').submit(function() {
@@ -12,11 +10,12 @@ $('#usernameForm').submit(function() {
   $('#gameboard').css('display', 'initial');
   socket.emit('player signup', username, function(response) {
     if (!response.playable) {
+      $('#userTitle').text('Viewing').css('display', 'block');
       alert(response.message);
       $('.square').off('click');
-      $('#userTitle').text('Viewing').css('display', 'block');
     } else {
       $('#userTitle').text(username).css('display', 'block');
+      (response.player === 1) ? playerPiece = 'x' : playerPiece = 'o'
     }
   });
   return false;
@@ -24,16 +23,14 @@ $('#usernameForm').submit(function() {
 
 $('.square').on('click', function(el) {
   console.log(el.target.id);
-  socket.emit('player moved', el.target.id);
+  socket.emit('player moved', {space: el.target.id, piece: playerPiece});
 });
 
-socket.on('place movement', function(id) {
-  $('#'+id).text(currentPlayer);
-  (currentPlayer === player1) ? currentPlayer = player2 : currentPlayer = player1;
+socket.on('place movement', function(move) {
+  $('#'+move.space).text(move.piece);
 });
 
 socket.on('user connected', function(numOfPlayers) {
-  console.log(numOfPlayers);
   if (numOfPlayers >= 2) {
     $('#usernameForm').css('display', 'none');
     $('#gameboard').css('display', 'initial');

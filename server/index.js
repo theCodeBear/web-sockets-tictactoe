@@ -21,6 +21,7 @@ io.on('connection', function(socket) {
     } else {
       cb({
         message: 'Hi ' + username + '! You have signed up as player ' + numOfPlayers,
+        player: numOfPlayers,
         playable: true
       });
     }
@@ -28,9 +29,8 @@ io.on('connection', function(socket) {
     cb('you signed up as ' + username);
   });
 
-  socket.on('player moved', function(id) {
-    console.log('player touched square', id);
-    io.emit('place movement', id);
+  socket.on('player moved', function(move) {
+    io.emit('place movement', move);
   });
 });
 
