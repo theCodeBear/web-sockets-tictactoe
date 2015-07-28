@@ -26,8 +26,11 @@ $('.square').on('click', function(el) {
   socket.emit('player moved', {space: el.target.id, piece: playerPiece});
 });
 
+// if space is not taken then fill it with the move
 socket.on('place movement', function(move) {
-  $('#'+move.space).text(move.piece);
+  if (!$('#'+move.space).text()) {
+    $('#'+move.space).text(move.piece);
+  }
 });
 
 socket.on('user connected', function(numOfPlayers) {
