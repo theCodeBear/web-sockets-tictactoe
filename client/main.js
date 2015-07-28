@@ -13,10 +13,12 @@ $('#usernameForm').submit(function() {
   socket.emit('player signup', username, function(response) {
     if (!response.playable) {
       $('#userTitle').text('Viewing').css('display', 'block');
+      createGameState(response.gameboard);
       alert(response.message);
       $('.square').off('click');
     } else {
       $('#userTitle').text(username).css('display', 'block');
+      createGameState(response.gameboard);
       if (response.player === 1) {
         $('.square').addClass('myTurn');
         playerPiece = 'x';
@@ -50,11 +52,18 @@ socket.on('place movement', function(move) {
   }
 });
 
-socket.on('user connected', function(numOfPlayers) {
-  if (numOfPlayers >= 2) {
+socket.on('user connected', function(gameInfo) {
+  createGameState(gameInfo.gameboard);
+  if (gameInfo.numOfPlayers >= 2) {
     $('#usernameForm').css('display', 'none');
     $('#gameboard').css('display', 'initial');
     $('#userTitle').text('Viewing').css('display', 'block');
     $('.square').off('click');
   }
 });
+
+function createGameState(gameboard) {
+  gameboard.forEach(function(piece, index) {
+    $('#'+index).text(piece);
+  });
+}

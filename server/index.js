@@ -6,9 +6,10 @@ var io = require('socket.io')(http);
 app.use(express.static(__dirname + './../client'));
 
 var numOfPlayers = 0;
+var gameboard = new Array(9);
 
 io.on('connection', function(socket) {
-  socket.emit('user connected', numOfPlayers);
+  socket.emit('user connected', {numOfPlayers: numOfPlayers, gameboard: gameboard});
   console.log('user connected', numOfPlayers);
 
   socket.on('player signup', function(username, cb) {
@@ -16,12 +17,14 @@ io.on('connection', function(socket) {
       numOfPlayers--;
       cb({
         message: 'Sorry, both player slots have been filled already.',
+        gameboard: gameboard,
         playable: false
       });
     } else {
       cb({
         message: 'Hi ' + username + '! You have signed up as player ' + numOfPlayers,
         player: numOfPlayers,
+        gameboard: gameboard,
         playable: true
       });
     }
@@ -30,6 +33,7 @@ io.on('connection', function(socket) {
   });
 
   socket.on('player moved', function(move) {
+    gameboard[move.space] = move.piece;
     socket.broadcast.emit('place movement', move);
   });
 });
